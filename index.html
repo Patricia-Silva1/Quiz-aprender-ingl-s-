@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="PT-br">
+
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Quiz - Idioma</title>
+
+    <head>
+        <style>
+            * {
+                margin: 0;
+                padding: 0;
+                box-sizing: border-box;
+            }
+
+            .topo {
+                display: flex;
+                width: 450px;
+                height: 20px;
+                margin: 20px auto 10px auto;
+                justify-content: center;
+                align-items: center;
+                font-size: 25px;
+                color: rgb(70, 70, 70);
+            }
+
+            .quadro {
+                min-height: 40px;
+                width: 370px;
+                margin: auto;
+                border: 2px solid rgb(185, 185, 185);
+                box-shadow: 5px 5px 5px grey;
+                border-radius: 20px;
+                overflow: hidden;
+                text-align: center;
+            }
+
+            .nota {
+                width: 100px;
+            }
+
+            .questao {
+                padding: 10px;
+                font-size: 24;
+                font-weight: bold;
+                background-color: rgb(125, 209, 0);
+                color: white;
+            }
+
+            .lista {
+                line-height: 40px;
+                margin: 5px;
+                border-radius: 10px;
+                margin: 0;
+                padding: 0;
+            }
+
+            .lista li {
+                cursor: pointer;
+                text-align: left;
+                font-weight: bold;
+                font-size: 18px;
+                list-style-type: none;
+                background-color: lightgray;
+                color: black;
+                margin: 10px 0px;
+                padding-left: 20px;
+            }
+
+            .lista li:hover {
+                font-size: 1.2em;
+                background-color: gray;
+                color: white;
+            }
+
+            .btn {
+                background-color: rgb(125, 209, 0);
+                color: white;
+                font-size: 25px;
+                height: 60px;
+                margin: 10px 0px 0px 0px;
+                padding-top: 15px;
+            }
+
+            .btn:hover {
+                background-color: green;
+                transition: 1s;
+                color: rgb(125, 209, 0);
+                cursor: pointer;
+            }
+
+            .progresso {
+                margin-top: 10px;
+                text-align: center;
+                font-size: 24px;
+                font-weight: bold;
+            }
+
+            .vermelho {
+                background-color: indianred !important;
+            }
+
+            .verde {
+                background-color: mediumspringgreen !important;
+            }
+
+            .questao span {
+                color: rgb(0, 59, 0);
+                font-size: 23px;
+                font-weight: bolder;
+            }
+
+            #resposta span {
+                color: rgb(0, 59, 0);
+                font-size: 23px;
+                font-weight: bolder;
+            }
+
+            .disabled {
+                pointer-events: none;
+                opacity: 0.2;
+            }
+        </style>
+    </head>
+
+<body>
+    <div class="topo">
+        <p> Quiz para teste de idioma</p>
+    </div>
+    <div class="quadro">
+        <div id="questao" class="questao">Título da Questão
+        </div>
+        <ul id="alternativas" class="lista">
+            <li id="0">A</li>
+            <li id="1">B</li>
+            <li id="2">C</li>
+            <li id="3">D</li>
+        </ul>
+        <div id="resposta"></div>
+        <div class="btn" id="btn" onclick="proximaQuestao()">Proxima >>
+        </div>
+    </div>
+    <br>
+    <div class="quadro">
+        <h4>Seu progresso</h4>
+        <div id="progresso" class="progresso">0/0</div>
+    </div>
+    <br>
+    <div class="quadro nota">
+        <h4>Sua Nota</h4>
+        <div id="nota" class="progresso">-</div>
+    </div>
+    <br>
+    <script>
+        dados = [{
+            id: '0',
+            titulo: 'Peixe-boi',
+            alts: ['Creeper', 'Squirrel', 'Manatee', 'Fox'],
+            resposta: 2
+        },
+        {
+            id: '1',
+            titulo: 'Gambá',
+            alts: ['Possum', 'Eagle', 'Worm', 'Aligator'],
+            resposta: 0
+        },
+        {
+            id: '2',
+            titulo: 'Foca',
+            alts: ['Turtle', 'Seal', 'Racoon', 'Falcon'],
+            resposta: 1
+        },
+        {
+            id: '3',
+            titulo: 'Águia',
+            alts: ['Beetle', 'Eagle', 'Deer', 'Bee'],
+            resposta: 1
+        },
+        {
+            id: '4',
+            titulo: 'Barata',
+            alts: ['Cockroach', 'Racoon', 'Fox', 'Ant'],
+            resposta: 0
+        },
+        {
+            id: '5',
+            titulo: 'Formiga',
+            alts: ['Worm', 'Squirrel', 'Turtle', 'Ant'],
+            resposta: 3
+        }
+        ];
+
+        let questaoAtual = 0; // Inicia contador das questões.
+        let acertos = 0;
+
+        setup(); // Chama função que mostra Primeira questão.
+
+        function setup() {
+            mostraQuestao(); // Chama função que mostra quiz.
+        }
+
+        function mostraQuestao() {
+            document.getElementById('questao').innerHTML =
+                `Como se diz: <span>${dados[questaoAtual].titulo}</span> em inglês?`; // imprime enunciado da questão.
+            document.getElementById('resposta').innerHTML = "";
+            let quadro = document.getElementById('alternativas'); // Pega o 'parent' dos itens da lista.
+            for (let i = 0; i < quadro.children.length; i++) {
+                quadro.children[i].innerHTML = dados[questaoAtual].alts[
+                    i]; // Pega 'resposta' na array e imprime na tela.
+                quadro.children[i].className = ''; // Esvazia a class dos itens da lista que foram preenchidas
+                quadro.children[i].addEventListener('click',
+                    testaResposta); // Fica esperando usuário clicar em uma alternativa.
+            }
+            atualizaProgresso(); // Chama função alterar score.
+        }
+
+        function atualizaProgresso() { // Função alterar score.
+            let progresso = document.getElementById('progresso');
+            progresso.innerHTML = (questaoAtual + 1) + '/' + dados.length;
+        }
+
+        function testaResposta(e) {
+            //if (e.target.id != 'alternativas') {
+            if (document.querySelector('.verde') == null) { //Se não existe li na cor verde, ou seja, o usuário ainda não escolheu uma alternativa.
+                let resposta = dados[questaoAtual].resposta; // Atribui a resposta correta à variável 'resposta'.
+                if (e.target.id == resposta) { // Se resposta clicada é igua à resposta certa...
+                    e.target.classList.add('verde'); // Muda resposta clicada para verde.
+                    document.getElementById('resposta').innerHTML =
+                        "RESPOSTA CORRETA <span>\&#10004</span>"; // Imprime mensagem de resposta correta para o usuário.
+                    acertos++; // Incrementa o número de acertos
+                } else { // Se a resposta clicada for a errada...
+                    e.target.classList.add('vermelho'); // Pinta resposta clicada de vermelho.
+                    document.getElementById('alternativas').children[resposta].classList.add('verde'); // Pinta a resposta correta de verde.
+                    document.getElementById('resposta').innerHTML =
+                        "RESPOSTA INCORRETA! <span>\&#9747;</span>"; // Imprime mensagem de resposta INcorreta para o usuário.
+                }
+            } else { // Se o usuário está tentando responder de novo...
+                alert('Você já respondeu esta questão. Vá para a próxima');
+            }
+        }
+
+        function proximaQuestao() { //Função chamada quando usuário clica no botão 'próxima'.
+            if (document.querySelector('.verde') !=
+                null) { // Se o usuário clicar em 'Próxima' e não tiver selecionado uma resposta, o sistema não avança.
+                questaoAtual++; // Incrementa o número da questão atual.
+                // console.log(questaoAtual);
+                if (questaoAtual == dados.length) { // Testa se já chegou na última questão.
+                    mostraNota(); // Se chegou na última questão, então finaliza mostrando a nota.
+                    impedeCliqueNaUltimaQuestao();
+                    document.getElementById('btn').innerHTML = 'Reiniciar'; // Muda botão para reiniciar.
+                    document.getElementById('btn').setAttribute('style', 'background: green; color: white;'); // Pinta botão 'Reiniciar'
+                    document.getElementById('btn').setAttribute('onclick', 'reiniciar()'); //Insere 'onclick' de reinício no botão.
+
+                } else {
+                    mostraQuestao();
+                }
+            } else {
+                alert(
+                    'Favor escolher uma alternativa.'); // Mostra alerta para escolher uma resposta para poder avançar.
+            }
+        }
+
+        function impedeCliqueNaUltimaQuestao() {
+            let quadro = document.getElementById('alternativas'); // Pega o 'parent' dos itens da lista.
+            for (let i = 0; i < quadro.children.length; i++) {
+                quadro.children[i].removeEventListener('click', testaResposta); // Remove EventListener impossibilitando que sejam clicadas as alternativas.
+                quadro.children[i].classList.add('disabled'); // desabilita as alternativas, tornando-as esmaecidas.
+            }
+        }
+
+        function mostraNota() {
+            let nota = document.getElementById('nota'); // Pega DIV que mostra a nota.
+            let resultadoFinal = ((acertos / dados.length) * 100); // Calcula o resultado em percntual;
+            nota.innerHTML = `${resultadoFinal.toFixed()}%`; // Coloca o percentual com '0' casa decimal.
+        }
+
+        function reiniciar() {
+            location.reload(); // Reiniciar o Quiz
+        }
+    </script>
+</body>
+
+</html>
